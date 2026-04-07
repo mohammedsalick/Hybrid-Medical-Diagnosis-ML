@@ -1,5 +1,3 @@
-# Text files: LF line endings (avoids binary / encoding issues on HF)
-* text=auto eol=lf
-README.md text eol=lf
-Instruction.md text eol=lf
+# Markdown + shell: LF (keeps README valid text on Hugging Face)
+*.md text eol=lf
 docker-entrypoint.sh text eol=lf
