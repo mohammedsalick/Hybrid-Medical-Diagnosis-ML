@@ -1,4 +1,9 @@
-models/
+# Bytecode / env
 __pycache__/
 *.pyc
 .env
+
+# Trained artifacts — do not commit or push to Hugging Face.
+# Generate on the Space with: python train_model.py (see Dockerfile / docker-entrypoint.sh)
+models/
+*.pkl
