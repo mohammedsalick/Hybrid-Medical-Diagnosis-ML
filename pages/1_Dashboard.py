@@ -1,28 +1,41 @@
 import streamlit as st
+from ui_components import (
+    hero_markdown,
+    inject_global_css,
+    render_flow_stepper,
+    render_nav_rail,
+    render_sidebar_journey,
+)
 
-st.set_page_config(page_title="Dashboard", page_icon="📊", layout="wide")
+st.set_page_config(page_title="Dashboard", page_icon="📊", layout="wide", initial_sidebar_state="collapsed")
 
-st.title("📊 System Dashboard")
-st.subheader("How the Hybrid Medical Diagnosis System Works")
+inject_global_css()
+render_sidebar_journey()
 
-st.markdown("---")
+render_flow_stepper("dashboard")
+render_nav_rail("dashboard")
 
-# Overview
-st.header("🔍 Project Overview")
-st.write("""
-This system is a **Hybrid Medical Diagnosis Prediction System** that combines:
+st.markdown(
+    hero_markdown(
+        "Step 2 — System dashboard",
+        "How the hybrid stack fits together: ML for pattern completion, rules for explainability, and classical reasoning patterns you can cite in reports. When you are ready, go to **Predict** to run a case.",
+    ),
+    unsafe_allow_html=True,
+)
 
-- **Part A: Machine Learning Brain**
-- **Part B: Expert System Brain**
+tab1, tab2, tab3 = st.tabs(["Overview & architecture", "ML & expert brains", "Chaining & flow"])
 
-The goal is to predict diseases from symptoms and explain the reasoning behind the prediction.
-""")
-
-st.markdown("---")
-
-# Architecture
-st.header("🏗️ System Architecture")
-st.code("""
+with tab1:
+    st.markdown(
+        """
+<div class="hybrid-card">
+<p style="color:#94a3b8;margin:0 0 0.75rem 0;">This system is a <strong style="color:#e2e8f0;">Hybrid Medical Diagnosis</strong> stack: <strong style="color:#2dd4bf;">Part A — ML brain</strong> plus <strong style="color:#a5b4fc;">Part B — expert rules</strong>. Together they predict from symptoms and surface human-readable reasons.</p>
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.code(
+        """
 User selects symptoms
         ↓
 Input Preprocessing
@@ -41,168 +54,88 @@ Disease Prediction              Rule Matching / Reasoning
               Explanation Module
                        ▼
                 Final Output
-""")
+        """,
+        language=None,
+    )
 
-st.markdown("---")
+with tab2:
+    c1, c2 = st.columns(2, gap="medium")
+    with c1:
+        st.markdown(
+            """
+<div class="hybrid-card">
+<h4 style="margin:0 0 0.5rem 0;color:#2dd4bf;">Part A — ML brain</h4>
+<ol style="margin:0;padding-left:1.2rem;color:#cbd5e1;line-height:1.7;">
+<li>Load <code>Training.csv</code> / <code>Testing.csv</code></li>
+<li>Binary symptom features</li>
+<li>Train <strong>Random Forest</strong></li>
+<li>Output: top class + probabilities</li>
+</ol>
+</div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.code("Dataset → Train → Patterns → Predict", language=None)
+    with c2:
+        st.markdown(
+            """
+<div class="hybrid-card">
+<h4 style="margin:0 0 0.5rem 0;color:#a5b4fc;">Part B — Expert shell</h4>
+<ul style="margin:0;padding-left:1.2rem;color:#cbd5e1;line-height:1.7;">
+<li><strong>Knowledge base</strong> — IF–THEN rules</li>
+<li><strong>Inference</strong> — symptom subset matching</li>
+<li><strong>Explanation</strong> — fired rules + warnings</li>
+</ul>
+<p style="margin:0.75rem 0 0 0;color:#64748b;font-size:0.9rem;">Example: IF high_fever AND chills AND sweating THEN malaria-like pattern.</p>
+</div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.code("Symptoms → Rules → Match → Explanation", language=None)
 
-# Part A
-st.header("🧠 Part A — Machine Learning Brain")
-st.write("""
-This module learns disease patterns from the Kaggle dataset.
-
-### It works like this:
-1. Read dataset (`Training.csv`, `Testing.csv`)
-2. Convert symptoms into features
-3. Train a **Random Forest model**
-4. Predict the most likely disease from user symptoms
-
-### Output:
-- Predicted disease
-- Top 3 predictions
-- Confidence score
-""")
-
-st.code("""
-Dataset → Train Model → Learn Patterns → Predict Disease
-""")
-
-st.markdown("---")
-
-# Part B
-st.header("📚 Part B — Expert System Brain")
-st.write("""
-This module adds **reasoning and explanation** to the system.
-
-### It contains:
-- **Knowledge Base** → Medical IF–THEN rules
-- **Inference Engine** → Matches rules with symptoms
-- **Explanation Module** → Explains why prediction happened
-
-### Example Rule:
-IF fever AND cough AND fatigue THEN Flu likely
-""")
-
-st.code("""
-User Symptoms → Check Rules → Match Conditions → Explanation
-""")
-
-st.markdown("---")
-
-# Forward Chaining
-st.header("➡️ Forward Chaining")
-st.write("""
-Forward Chaining is **data-driven reasoning**.
-
-It starts from the **patient symptoms (facts)** and moves toward the **disease (conclusion)**.
-
-### Example:
-Facts:
-- Fever = True
-- Cough = True
-- Fatigue = True
-
-Rule:
-IF Fever AND Cough AND Fatigue THEN Flu
-
-Conclusion:
-Flu predicted
-""")
-
-st.code("""
-Symptoms → Match Rules → Fire Rule → Disease
-""")
-
-st.markdown("---")
-
-# Backward Chaining
-st.header("⬅️ Backward Chaining")
-st.write("""
-Backward Chaining is **goal-driven reasoning**.
-
-It starts from a **disease hypothesis** and checks whether required symptoms are present.
-
-### Example:
-Goal:
-Does patient have Flu?
-
-Checks:
-- Fever? ✔
-- Cough? ✔
-- Fatigue? ✔
-
-Conclusion:
-Flu confirmed
-""")
-
-st.code("""
-Disease Hypothesis → Check Required Symptoms → Confirm / Reject
-""")
-
-st.markdown("---")
-
-# SLD Resolution
-st.header("🧩 SLD Resolution")
-st.write("""
-SLD Resolution is a **logical proof process** used in rule-based systems.
-
-It proves a diagnosis by breaking it into smaller symptom checks.
-
-### Example:
-Goal:
-Diagnose(Flu)
-
-Rule:
-Diagnose(Flu) :- Fever, Cough, Fatigue
-
-Resolution:
-1. Check Fever
-2. Check Cough
-3. Check Fatigue
-
-If all are true → diagnosis is proven
-""")
-
-st.code("""
+with tab3:
+    st.markdown("##### Forward chaining (data-driven)")
+    st.write(
+        "Start from **facts** (symptoms), apply rules forward toward **conclusions** (disease hypotheses)."
+    )
+    st.code("Symptoms → Match rules → Fire rule → Conclusion", language=None)
+    st.markdown("##### Backward chaining (goal-driven)")
+    st.write(
+        "Start from a **goal** (e.g. “flu?”), check whether required symptoms are present."
+    )
+    st.code("Hypothesis → Required signs → Confirm / reject", language=None)
+    st.markdown("##### SLD-style resolution")
+    st.write(
+        "Treat the diagnosis as a **goal literal**, resolve it against rule bodies (symptom literals) until proved or failed."
+    )
+    st.code(
+        """
 Goal: Diagnose(Flu)
-        ↓
-Check Fever?
-        ↓
-Check Cough?
-        ↓
-Check Fatigue?
-        ↓
-PROVEN
-""")
+   ↓ Check Fever, Cough, Fatigue
+   ↓ All satisfied → PROVEN
+        """,
+        language=None,
+    )
+    st.markdown("##### End-to-end")
+    st.code(
+        """
+Patient Symptoms → [Form] → [Binary vector]
+     ├─► ML brain → scores
+     └─► Knowledge / rules → explanations
+              └─► Combined output
+        """,
+        language=None,
+    )
 
 st.markdown("---")
-
-# End to End Flow
-st.header("🔄 End-to-End Flow")
-st.code("""
-Patient Symptoms
-     │
-     ▼
-[Symptom Input Form]
-     │
-     ▼
-[Preprocessing Layer]
-(Convert symptoms into binary vector)
-     │
-     ├──────────────► [Machine Learning Brain]
-     │                 (Random Forest Model)
-     │                          │
-     │                          ▼
-     │               [Predicted Disease + Probability]
-     │
-     └──────────────► [Knowledge Base]
-                       (Rules / Facts / Advice)
-                                  │
-                                  ▼
-                        [Inference Engine]
-                       (Rule Matching / Explanation)
-                                  │
-                                  ▼
-                    [Final Diagnosis Support Output]
-""")
-
-st.success("✅ Dashboard ready — use the Predict page to test the system.")
+st.markdown("##### Continue the flow")
+p, n = st.columns(2, gap="medium")
+with p:
+    st.page_link("app.py", label="Back to Home", icon="🏠", use_container_width=True)
+with n:
+    st.page_link(
+        "pages/2_Predict.py",
+        label="Next: Predict",
+        icon="🩺",
+        use_container_width=True,
+    )
